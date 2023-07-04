@@ -21,7 +21,7 @@ var (
 			"partition",
 		},
 	)
-	//Current state of offset by consumer group
+	// Current state of offset by consumer group
 	CurrentOffset = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "kafka_consumer_group_current_offset",
@@ -30,6 +30,17 @@ var (
 		[]string{
 			"topic",
 			"group",
+			"partition",
+		},
+	)
+	// Timestamp of the first message in the topic partition
+	FirstMessageTimestamp = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "kafka_topic_first_message_timestamp",
+			Help: "Timestamp of the first message in the topic partition.",
+		},
+		[]string{
+			"topic",
 			"partition",
 		},
 	)
@@ -48,6 +59,7 @@ func init() {
 	prometheus.MustRegister(CurrentOffset)
 	prometheus.MustRegister(OffsetLag)
 	prometheus.MustRegister(LookupHist)
+	prometheus.MustRegister(FirstMessageTimestamp)
 }
 
 func prometheusListen(addr string) {

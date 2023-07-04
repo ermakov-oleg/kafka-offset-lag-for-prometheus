@@ -19,22 +19,23 @@ import (
 )
 
 var (
-	activeOnly          = flag.Bool("active-only", false, "Show only consumers with an active consumer protocol.")
-	kafkaBrokers        = flag.String("kafka-brokers", "localhost:9092", "Comma separated list of kafka brokers.")
-	prometheusAddr      = flag.String("prometheus-addr", ":7979", "Prometheus listen interface and port.")
-	refreshInt          = flag.Int("refresh-interval", 15, "Time between offset refreshes in seconds.")
-	saslUser            = flag.String("sasl-user", "", "SASL username.")
-	saslPass            = flag.String("sasl-pass", "", "SASL password.")
-	debug               = flag.Bool("debug", false, "Enable debug output.")
-	algorithm           = flag.String("algorithm", "", "The SASL algorithm sha256 or sha512 as mechanism")
-	enableCurrentOffset = flag.Bool("enable-current-offset", false, "Enables metrics for current offset of a consumer group")
-	enableNewAPI        = flag.Bool("enable-new-api", false, "Enables new API, which allows to use optimized Kafka API calls")
-	groupPattern        = flag.String("group-pattern", "", "Regular expression to filter consumer groups")
-	certFile            = flag.String("certificate", "", "The optional certificate file for client authentication")
-	keyFile             = flag.String("key", "", "The optional key file for client authentication")
-	caFile              = flag.String("ca", "", "The optional certificate authority file for TLS client authentication")
-	skipVerifySSL       = flag.Bool("skip-verify", false, "Optional verify ssl certificates chain")
-	useTLS              = flag.Bool("tls", false, "Use TLS to communicate with the cluster")
+	activeOnly           = flag.Bool("active-only", false, "Show only consumers with an active consumer protocol.")
+	kafkaBrokers         = flag.String("kafka-brokers", "localhost:9092", "Comma separated list of kafka brokers.")
+	prometheusAddr       = flag.String("prometheus-addr", ":7979", "Prometheus listen interface and port.")
+	refreshInt           = flag.Int("refresh-interval", 15, "Time between offset refreshes in seconds.")
+	saslUser             = flag.String("sasl-user", "", "SASL username.")
+	saslPass             = flag.String("sasl-pass", "", "SASL password.")
+	debug                = flag.Bool("debug", false, "Enable debug output.")
+	algorithm            = flag.String("algorithm", "", "The SASL algorithm sha256 or sha512 as mechanism")
+	enableCurrentOffset  = flag.Bool("enable-current-offset", false, "Enables metrics for current offset of a consumer group")
+	enableNewAPI         = flag.Bool("enable-new-api", false, "Enables new API, which allows to use optimized Kafka API calls")
+	groupPattern         = flag.String("group-pattern", "", "Regular expression to filter consumer groups")
+	certFile             = flag.String("certificate", "", "The optional certificate file for client authentication")
+	keyFile              = flag.String("key", "", "The optional key file for client authentication")
+	caFile               = flag.String("ca", "", "The optional certificate authority file for TLS client authentication")
+	skipVerifySSL        = flag.Bool("skip-verify", false, "Optional verify ssl certificates chain")
+	useTLS               = flag.Bool("tls", false, "Use TLS to communicate with the cluster")
+	enableEarliestOffset = flag.Bool("enable-earliest-offset", false, "Enables timestamp metrics for earliest offset for topic partitions")
 )
 
 type TopicSet map[string]map[int32]int64
@@ -156,6 +157,9 @@ func main() {
 						continue
 					}
 					topicSet[topic][partition] = toff
+				}
+				if *enableEarliestOffset {
+					getEarliestOffsets(client, topic, partitions, topicSet[topic])
 				}
 			}
 

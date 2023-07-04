@@ -22,6 +22,7 @@ Use the following ENV vars to change the default options:
 * ENABLE_CURRENT_OFFSET=Enable current offset consumer group metric (default false)
 * ENABLE_NEW_API=Enables new API, which allows to use optimized Kafka API calls (default false)
 * GROUP_PATTERN=Regular expression to filter consumer groups (default "")
+* ENABLE_EARLIEST_OFFSET=Enables timestamp metrics for earliest offset for topic partitions (default false)
 
 For TLS support, you can use the following ENV vars:
 * TLS=true For enabling TLS support (default false)
